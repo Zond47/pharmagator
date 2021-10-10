@@ -1,1 +1,5 @@
 rootProject.name = 'pharmagator'
+
+include 'api'
+include 'api'
+
