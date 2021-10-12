@@ -3,3 +3,6 @@ spring:
     url: jdbc:postgresql:pharmagator
     username: postgres
     password: 9339
+  jpa:
+    hibernate:
+      ddl-auto: validate
