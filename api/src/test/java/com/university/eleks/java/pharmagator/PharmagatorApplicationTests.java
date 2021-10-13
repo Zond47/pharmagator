@@ -12,6 +12,7 @@ class PharmagatorApplicationTests {
 
 	@Test
 	void contextLoads() {
+		assertEquals(1,1);
 	}
 
 }
