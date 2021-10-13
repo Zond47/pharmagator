@@ -22,6 +22,7 @@ public class PharmacyController {
         return ResponseEntity.ok(pharmacyRepository.findAll());
     }
 
+    // Add maping
     public ResponseEntity<Pharmacy> getById(long id){
         return ResponseEntity.ok(pharmacyRepository.getById(id));
     }
