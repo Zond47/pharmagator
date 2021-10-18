@@ -10,6 +10,7 @@ import javax.persistence.Table;
 @Entity
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "pharmacies")
 public class Pharmacy {
     @Id

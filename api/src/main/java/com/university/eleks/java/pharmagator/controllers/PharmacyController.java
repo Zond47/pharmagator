@@ -1,12 +1,13 @@
 package com.university.eleks.java.pharmagator.controllers;
 
+import com.university.eleks.java.pharmagator.controllers.dto.PharmacyDto;
 import com.university.eleks.java.pharmagator.entities.Pharmacy;
 import com.university.eleks.java.pharmagator.repositories.PharmacyRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -16,33 +17,40 @@ import java.util.List;
 public class PharmacyController {
 
     private final PharmacyRepository pharmacyRepository;
+    private final ModelMapper modelMapper;
 
     @GetMapping
     public ResponseEntity<List<Pharmacy>> getAll() {
         return ResponseEntity.ok(pharmacyRepository.findAll());
     }
 
-    // Add maping
-    public ResponseEntity<Pharmacy> getById(long id){
-        return ResponseEntity.ok(pharmacyRepository.getById(id));
+    @GetMapping("/{id}")
+    public ResponseEntity<Pharmacy> getById(@PathVariable("id") Long id){
+        return pharmacyRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    public void create(String name, String medicine_link_template){
-        pharmacyRepository.save(Pharmacy.builder()
-                        .name(name)
-                        .medicineLinkTemplate(medicine_link_template)
-                        .build());
+    @PostMapping
+    public ResponseEntity<Pharmacy> create(@RequestBody PharmacyDto pharmacyDto){
+        Pharmacy pharmacy = modelMapper.map(pharmacyDto, Pharmacy.class);
+
+        return ResponseEntity.ok(pharmacyRepository.save(pharmacy));
     }
 
-    public void update(long id, String name, String link){
-        Pharmacy updated = pharmacyRepository.getById(id);
-        updated.setName(name);
-        updated.setMedicineLinkTemplate(link);
+    @PutMapping("/{id}")
+    public ResponseEntity<Pharmacy> update(@RequestBody PharmacyDto pharmacyDto,
+                       @PathVariable Long id){
+        return pharmacyRepository.findById(id)
+                .map(source -> {
+                    source = modelMapper.map(pharmacyDto, Pharmacy.class);
+                    return ResponseEntity.ok(pharmacyRepository.save(source));
+                }).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteById(@PathVariable Long id){
         pharmacyRepository.deleteById(id);
-        pharmacyRepository.save(updated);
-    }
-
-    public void deleteById(long id){
-        pharmacyRepository.deleteById(id);
+        return ResponseEntity.ok("Deleted");
     }
 }
